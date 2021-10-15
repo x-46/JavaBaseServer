@@ -77,6 +77,7 @@ public class TLSFactory {
 	
 		if(clientMode) {
 			sf = ((SSLSocketFactory) SSLSocketFactory.getDefault());
+			//sf = sslContext("/home/x/MailServer/certificate.p12", "123").getSocketFactory();
 		}else {
 			sf = sslContext(keystoreFile, keystoreFilePassword).getSocketFactory();
 		}

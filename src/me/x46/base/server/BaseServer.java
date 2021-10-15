@@ -18,6 +18,8 @@ public class BaseServer implements Runnable{
 	
 	private String keystoreFile;
 	private String keystoreFilePassword;
+	
+	private String sendLineEnding = "\n";
 
 	public BaseServer(int port) {
 		this.port = port;
@@ -94,6 +96,18 @@ public class BaseServer implements Runnable{
 
 	public void setKeystoreFilePassword(String keystoreFilePassword) {
 		this.keystoreFilePassword = keystoreFilePassword;
+	}
+
+	public void setSendLineEnding(String sendLineEnding) {
+		this.sendLineEnding = sendLineEnding;
+	}
+
+	public String getSendLineEnding() {
+		return sendLineEnding;
+	}
+
+	public void setClientConnected(ArrayList<ClientConnected> clientConnected) {
+		this.clientConnected = clientConnected;
 	}
 	
 	

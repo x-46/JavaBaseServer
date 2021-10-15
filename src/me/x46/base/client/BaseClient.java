@@ -12,9 +12,13 @@ public class BaseClient {
 
 	private ArrayList<InBox> inBoxList;
 	private ArrayList<Connected> connectedList;
+	
+	private ArrayList<HandshakeDone> handshakedoneList;
 
 	private ClientIO io;
 
+	private String sendLineEnding = "\n";
+	
 	private boolean runing;
 
 	public BaseClient(String ip, int port) {
@@ -23,6 +27,7 @@ public class BaseClient {
 
 		inBoxList = new ArrayList<InBox>();
 		connectedList = new ArrayList<Connected>();
+		handshakedoneList = new ArrayList<HandshakeDone>();
 	}
 
 	public void openConnection() {
@@ -38,13 +43,21 @@ public class BaseClient {
 		}
 
 	}
-
+	
+	public void close() {
+		io.close();
+	}
+	
 	public void addInBox(InBox b) {
 		inBoxList.add(b);
 	}
 
 	public void addConnectedEvent(Connected c) {
 		connectedList.add(c);
+	}
+	
+	public void addHandshakeDoneEvent(HandshakeDone c) {
+		handshakedoneList.add(c);
 	}
 
 	public void sendMessage(String message) {
@@ -59,11 +72,23 @@ public class BaseClient {
 		return connectedList;
 	}
 
+	protected ArrayList<HandshakeDone> getHandshakedoneList() {
+		return handshakedoneList;
+	}
+
 	public boolean isRuning() {
 		return runing;
 	}
 
 	public void startTLS() {
 		io.startTLS();
+	}
+	
+	public void setSendLineEnding(String sendLineEnding) {
+		this.sendLineEnding = sendLineEnding;
+	}
+
+	public String getSendLineEnding() {
+		return sendLineEnding;
 	}
 }

@@ -31,6 +31,8 @@ public class ClientConnection implements Runnable {
 		register = new HashMap<>();
 
 		clientList.add(this);
+		
+		setRegister("ip", socket.getInetAddress().toString().substring(1));
 
 		try {
 			this.out = new PrintWriter(this.socket.getOutputStream(), true);
@@ -109,7 +111,7 @@ public class ClientConnection implements Runnable {
 	}
 
 	public void sendMessage(String message) {
-		out.println(message);
+		out.print(message + server.getSendLineEnding());
 		out.flush();
 	}
 	

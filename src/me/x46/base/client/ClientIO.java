@@ -44,9 +44,10 @@ public class ClientIO implements Runnable {
 			try {
 
 				if (startTLSHandshake) {
-					
+					System.out.println("start");
 					TLSFactory f = new TLSFactory(clientSocket);
 					clientSocket = f.startHandshake();
+					
 					try {
 						this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 						this.out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -54,11 +55,16 @@ public class ClientIO implements Runnable {
 						e.printStackTrace();
 					}
 					
+					for(HandshakeDone d : client.getHandshakedoneList()) {
+						d.handshake();
+					}
+					
 
 					while (client.isRuning() && !clientSocket.isClosed()) {
 						String message = in.readLine();
 						for (int i = 0; i < client.getInBoxList().size(); i++) {
-							client.getInBoxList().get(i).in(message);
+							if(message != null) 
+								client.getInBoxList().get(i).in(message);
 						}
 					}
 					
@@ -86,8 +92,18 @@ public class ClientIO implements Runnable {
 	}
 
 	protected void send(String msg) {
-		out.println(msg);
+		out.print(msg + client.getSendLineEnding());
 		out.flush();
+	}
+
+	public void close() {
+		try {
+			clientSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
