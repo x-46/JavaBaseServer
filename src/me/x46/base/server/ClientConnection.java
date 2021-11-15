@@ -31,7 +31,7 @@ public class ClientConnection implements Runnable {
 		register = new HashMap<>();
 
 		clientList.add(this);
-		
+
 		setRegister("ip", socket.getInetAddress().toString().substring(1));
 
 		try {
@@ -45,11 +45,11 @@ public class ClientConnection implements Runnable {
 
 	@Override
 	public void run() {
-		
-		for(ClientConnected c : server.getClientConnected()) {
+
+		for (ClientConnected c : server.getClientConnected()) {
 			c.clientConnected(this);
 		}
-		
+
 		while (server.isRuning() && socket.isConnected()) {
 			try {
 				String message = in.readLine();
@@ -76,7 +76,7 @@ public class ClientConnection implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void startTLS() {
 		TLSFactory f = null;
 		try {
@@ -85,7 +85,7 @@ public class ClientConnection implements Runnable {
 			e.printStackTrace();
 		}
 		socket = f.startHandshake();
-		
+
 		try {
 			this.out = new PrintWriter(this.socket.getOutputStream(), true);
 			this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
@@ -99,9 +99,20 @@ public class ClientConnection implements Runnable {
 		register.put(key, value);
 	}
 
+	public boolean registerContainsKey(String key) {
+		if(register.containsKey(key)) {
+			if(register.get(key) == null) {
+				return false;
+			}
+			return true;
+		}
+		
+		return false;
+	}
+
 	public String getRegister(String key) {
 		if (!register.containsKey(key)) {
-			return "null";
+			return "";
 		}
 		return register.get(key);
 	}
@@ -114,7 +125,7 @@ public class ClientConnection implements Runnable {
 		out.print(message + server.getSendLineEnding());
 		out.flush();
 	}
-	
+
 	protected Socket getSocket() {
 		return socket;
 	}
