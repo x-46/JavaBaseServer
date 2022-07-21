@@ -54,10 +54,8 @@ public class ClientConnection implements Runnable {
 			try {
 				String message = in.readLine();
 				if (message != null) {
-					if (!message.equals("")) {
-						for (int i = 0; i < server.getClientLogic().size(); i++) {
-							server.getClientLogic().get(i).input(this, message);
-						}
+					for (ClientLogic l : server.getClientLogic()) {
+						l.input(this, message);
 					}
 				}
 			} catch (Exception e) {
@@ -100,13 +98,13 @@ public class ClientConnection implements Runnable {
 	}
 
 	public boolean registerContainsKey(String key) {
-		if(register.containsKey(key)) {
-			if(register.get(key) == null) {
+		if (register.containsKey(key)) {
+			if (register.get(key) == null) {
 				return false;
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
 

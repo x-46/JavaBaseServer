@@ -3,6 +3,7 @@ package me.x46.base.server;
 public interface ClientConnected {
 	public void clientConnected(ClientConnection cc);
 	
+	
 	public static ClientConnected getDefaultEvent() {
 		return new ClientConnected() {
 			@Override
@@ -11,4 +12,6 @@ public interface ClientConnected {
 			}
 		};
 	}
+	
+	
 }

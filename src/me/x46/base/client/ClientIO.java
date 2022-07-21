@@ -62,9 +62,9 @@ public class ClientIO implements Runnable {
 
 					while (client.isRuning() && !clientSocket.isClosed()) {
 						String message = in.readLine();
-						for (int i = 0; i < client.getInBoxList().size(); i++) {
+						for (InBox b : client.getInBoxList()) {
 							if(message != null) 
-								client.getInBoxList().get(i).in(message);
+								b.in(message);
 						}
 					}
 					
@@ -72,8 +72,9 @@ public class ClientIO implements Runnable {
 
 				if (in.ready()) { 
 					String message = in.readLine();
-					for (int i = 0; i < client.getInBoxList().size(); i++) {
-						client.getInBoxList().get(i).in(message);
+					for (InBox b : client.getInBoxList()) {
+						if(message != null) 
+							b.in(message);
 					}
 				}
 

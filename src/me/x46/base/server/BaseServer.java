@@ -1,8 +1,10 @@
 package me.x46.base.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 
 public class BaseServer implements Runnable{
@@ -20,9 +22,13 @@ public class BaseServer implements Runnable{
 	private String keystoreFilePassword;
 	
 	private String sendLineEnding = "\n";
+	
+	private String bindIp;
 
 	public BaseServer(int port) {
 		this.port = port;
+		
+		bindIp = null;
 		
 		clientLogic = new ArrayList<ClientLogic>();
 		clientConnected = new ArrayList<ClientConnected>();
@@ -35,7 +41,13 @@ public class BaseServer implements Runnable{
 	@Override
 	public void run() {
 		try {
-			serverSocket = new ServerSocket(port);
+			if(bindIp == null) {
+				serverSocket = new ServerSocket(port);
+			}else {
+				serverSocket = new ServerSocket(port, 0, InetAddress.getByName(bindIp));
+			}
+				
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -60,6 +72,10 @@ public class BaseServer implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void bindIp(String ip) {
+		this.bindIp = ip;
 	}
 	
 	public boolean isRuning() {
