@@ -10,7 +10,7 @@ import me.x46.base.client.InBox;
 public class Client {
 
 	public static void main(String[] args) {
-		BaseClient c = new BaseClient("x46.me", 1610);
+		BaseClient c = new BaseClient("x46.me", 1610, true);
 		Gui g = new Gui();
 		
 		c.addConnectedEvent(new Connected() {

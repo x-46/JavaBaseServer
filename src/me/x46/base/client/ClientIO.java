@@ -23,7 +23,6 @@ public class ClientIO implements Runnable {
 		this.client = client;
 		this.clientSocket = clientSocket;
 
-
 		try {
 			this.out = new PrintWriter(clientSocket.getOutputStream(), true);
 			this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -35,11 +34,11 @@ public class ClientIO implements Runnable {
 
 	@Override
 	public void run() {
-		
+
 		for (Connected c : client.getConnectedList()) {
 			c.connected();
 		}
-		
+
 		while (client.isRuning() && !clientSocket.isClosed()) {
 			try {
 
@@ -47,35 +46,44 @@ public class ClientIO implements Runnable {
 					System.out.println("start");
 					TLSFactory f = new TLSFactory(clientSocket);
 					clientSocket = f.startHandshake();
-					
+
 					try {
 						this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 						this.out = new PrintWriter(clientSocket.getOutputStream(), true);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
-					for(HandshakeDone d : client.getHandshakedoneList()) {
+
+					for (HandshakeDone d : client.getHandshakedoneList()) {
 						d.handshake();
 					}
-					
 
 					while (client.isRuning() && !clientSocket.isClosed()) {
+
 						String message = in.readLine();
+						if (message == null)
+							break;
 						for (InBox b : client.getInBoxList()) {
-							if(message != null) 
-								b.in(message);
+							b.in(message);
 						}
 					}
-					
+
 				}
 
-				if (in.ready()) { 
-					String message = in.readLine();
-					for (InBox b : client.getInBoxList()) {
-						if(message != null) 
-							b.in(message);
-					}
+				if (startTLSHandshake)
+					break;
+
+				if (!in.ready() && client.isSupportStartTLS()) {
+					continue;
+				}
+
+				String message = in.readLine();
+
+				if (message == null)
+					break;
+
+				for (InBox b : client.getInBoxList()) {
+					b.in(message);
 				}
 
 			} catch (IOException e) {
@@ -84,6 +92,10 @@ public class ClientIO implements Runnable {
 		}
 
 		System.out.println("end");
+
+		for (Disconnected d : client.getDisconnectedList()) {
+			d.disconnect();
+		}
 
 	}
 
@@ -104,7 +116,7 @@ public class ClientIO implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }

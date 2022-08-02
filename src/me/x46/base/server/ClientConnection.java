@@ -22,11 +22,15 @@ public class ClientConnection implements Runnable {
 
 	private HashMap<String, String> register;
 
+	private ArrayList<ClientLogic> clientLogic;
+
 	private static ArrayList<ClientConnection> clientList = new ArrayList<ClientConnection>();
 
 	protected ClientConnection(Socket socket, BaseServer server) {
 		this.socket = socket;
 		this.server = server;
+
+		clientLogic = new ArrayList<ClientLogic>();
 
 		register = new HashMap<>();
 
@@ -57,10 +61,18 @@ public class ClientConnection implements Runnable {
 					for (ClientLogic l : server.getClientLogic()) {
 						l.input(this, message);
 					}
+
+					for (ClientLogic l : this.clientLogic) {
+						l.input(this, message);
+					}
 				}
 			} catch (Exception e) {
 				break;
 			}
+		}
+
+		for (ClientDisconnected c : server.getClientDisconnected()) {
+			c.clientDisconnected(this);
 		}
 
 	}
@@ -115,6 +127,14 @@ public class ClientConnection implements Runnable {
 		return register.get(key);
 	}
 
+	public void addClientLogic(ClientLogic clientLogic) {
+		this.clientLogic.add(clientLogic);
+	}
+
+	public void removeClientLogic(ClientLogic clientLogic) {
+		this.clientLogic.remove(clientLogic);
+	}
+
 	public static ArrayList<ClientConnection> getClientList() {
 		return clientList;
 	}
@@ -127,5 +147,6 @@ public class ClientConnection implements Runnable {
 	protected Socket getSocket() {
 		return socket;
 	}
+
 
 }
